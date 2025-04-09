@@ -1,0 +1,6 @@
+<form action="{url 'elevage_app:initial_elevage'% }"
+        method="post">
+        {%{% csrf_token %}%}
+        {{form}}
+        <input type="submit"> Add </button>
+</form>
