@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .forms import ElevageForm
+from .models import Elevage
 
 def initial_elevage(request):
     if request.method=='GET':
@@ -13,6 +14,13 @@ def initial_elevage(request):
     return render(request,
                   'elevage_app/initial_elevage.html',{'form':form})
         
+        
+def list(request):
+    list_farm=Elevage.objects.order_by("farm_nom")
+    context={"list_farm":list_farm}
+    return render(request,"elevage_app/list.html",context)
+
+    
         
     
     
