@@ -5,7 +5,7 @@
     {% for farm in list_farm%}
     <li class="list-group-item">
         <a herf="{% url 'elevage_app:FarmList'  %}">{{farm.farm_nom}}</a>
-        {{farm.males}} males,{{farm.femelles}} femelles,{{farm.a_vendre}} vendre,{{farm.nourriture_kg}} nourriture_kg
+        - {{farm.males}} males,{{farm.femelles}} femelles,{{farm.a_vendre}} vendre,{{farm.nourriture_kg}} nourriture_kg
 
     </li>
     {% endfor %}

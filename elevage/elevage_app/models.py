@@ -13,6 +13,21 @@ class Elevage(models.Model):
     def __str__(self):
         return self.farm_nom
     
+class  Individu(models.Model):
+    SEXE_CHOICES=[('M','Male'),('F','Femelle')]
+    STATUT_CHOICES=[
+        ('P','Present'),
+        ('V','Vendu'),
+        ('M','Mort'),
+        ('G','Gravide')
+        
+    ]
+    elevage=models.ForeignKey(Elevage,on_delete=models.CASCADE)
+    sexe=models.CharField(max_length=1,choices=SEXE_CHOICES)
+    age_mois=models.PositiveIntegerField(default=0)
+    statut=models.CharField(max_length=1,choices=STATUT_CHOICES)
+    
+    
     
     
 # Create your models here.
