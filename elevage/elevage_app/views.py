@@ -15,10 +15,10 @@ def initial_elevage(request):
                   'elevage_app/initial_elevage.html',{'form':form})
         
         
-def list(request):
+def FarmList(request):
     list_farm=Elevage.objects.order_by("farm_nom")
     context={"list_farm":list_farm}
-    return render(request,"elevage_app/list.html",context)
+    return render(request,"elevage_app/Farm_list.html",context)
 
     
         
