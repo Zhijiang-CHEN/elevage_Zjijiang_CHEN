@@ -22,10 +22,12 @@ class  Individu(models.Model):
         ('G','Gravide')
         
     ]
-    elevage=models.ForeignKey(Elevage,on_delete=models.CASCADE)
+    elevage=models.ForeignKey(Elevage,on_delete=models.CASCADE,related_name='individus')
     sexe=models.CharField(max_length=1,choices=SEXE_CHOICES)
     age_mois=models.PositiveIntegerField(default=0)
     statut=models.CharField(max_length=1,choices=STATUT_CHOICES)
+    def __str__(self):
+        return f"{self.age_mois}-{self.sexe}-{self.statut}"
     
     
     

@@ -1,0 +1,18 @@
+
+
+{% block content %}
+<h2>Détails de l'élevage: {{ elevage.farm_nom }}</h2>
+<p>Nombre de mâles: {{ elevage.males }}</p>
+<p>Nombre de femelles: {{ elevage.femelles }}</p>
+
+<h3>Liste des individus</h3>
+<ul>
+    {% for individu in individus %}
+    <li>
+        Sexe: {{ individu.get_sexe_display }}, 
+        Âge: {{ individu.age_mois}}, 
+        État: {{ individu.get_statut_display }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
