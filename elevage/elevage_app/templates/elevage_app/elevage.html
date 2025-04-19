@@ -1,5 +1,4 @@
 
-
 {% block content %}
 <h2>Détails de l'élevage: {{ elevage.farm_nom }}</h2>
 <p>Nombre de mâles: {{ elevage.males }}</p>
@@ -15,4 +14,10 @@
     </li>
     {% endfor %}
 </ul>
+<h3>Actions du tour</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Valider</button>
+</form>
 {% endblock %}
