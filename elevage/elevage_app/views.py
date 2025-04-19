@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render,redirect
 from django.http import HttpResponse
-from .forms import ElevageForm
+from .forms import ElevageForm,ActionForm
 from .models import Elevage
 
 def initial_elevage(request):
@@ -22,8 +22,25 @@ def FarmList(request):
 
 def EleVage(request,id:int):
     elevage=get_object_or_404(Elevage,pk=id)
-    individus=elevage.individus.all()
-    return render(request,'elevage_app/elevage.html',{'elevage':elevage,'Individus':individus})
+    if request.method=='GET':
+        form=ActionForm()
+    elif request.method=='POST':
+        form=ActionForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['vendre'] > Elevage.a_vendre:
+                return render(request,'elevage_app/elevage.html',{'error':'Nombre de lapins a vendre invalide'})  
+            # ne pas oublier ajouter le contraints de ressource
+            else:
+                elevage.a_vendre-=form.cleaned_data['vendre']
+                elevage.cages+=form.cleaned_data['acheter_cages']
+                elevage.nourriture_kg+=form.cleaned_data['acheter_nourriture']
+                #ne pas oublier ajouter le cahnge d'argent
+                form.save()
+                return redirect('EleVage',pk=id)
+        else:
+            form=ActionForm()      
+            individus=elevage.individus.all()
+            return render(request,'elevage_app/elevage.html',{'elevage':elevage,'Individus':individus})
     
 
     
