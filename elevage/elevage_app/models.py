@@ -29,6 +29,22 @@ class  Individu(models.Model):
     def __str__(self):
         return f"{self.age_mois}-{self.sexe}-{self.statut}"
     
+class Regle(models.Model):
+    prix_nourriture = models.DecimalField(max_digits=6, decimal_places=2)
+    prix_cage = models.DecimalField(max_digits=6, decimal_places=2)
+    prix_vente_lapin = models.DecimalField(max_digits=6, decimal_places=2)
+    consommation_1mois = models.FloatField()
+    consommation_2mois = models.FloatField()
+    consommation_3mois = models.FloatField()
+    portee_max = 4
+    cage_max = models.PositiveIntegerField()
+    age_min_gravidite_mois = 6
+    age_max_gravidite_mois = 54
+    duree_gestation_mois = 1
+    def __str__(self):
+        return "Regles du jeu"
+    
+    
     
     
     

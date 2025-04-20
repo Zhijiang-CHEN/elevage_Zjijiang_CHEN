@@ -36,11 +36,11 @@ def EleVage(request,id:int):
                 elevage.nourriture_kg+=form.cleaned_data['acheter_nourriture']
                 #ne pas oublier ajouter le cahnge d'argent
                 form.save()
-                return redirect('EleVage',pk=id)
-        else:
-            form=ActionForm()      
-            individus=elevage.individus.all()
-            return render(request,'elevage_app/elevage.html',{'elevage':elevage,'Individus':individus})
+                return redirect('elevage_app:elevage',pk=id)
+    else:
+        form=ActionForm()      
+    individus=elevage.individus.all()
+    return render(request,'elevage_app/elevage.html',{'elevage':elevage,'Individus':individus})
     
 
     
