@@ -1,6 +1,8 @@
+{%block content%}
 <h2>initial elevage</h2>
 <form method="post" action="{% url 'elevage_app:initial_elevage' %}" >
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Submit</button>
 </form>
+{%endblock%}

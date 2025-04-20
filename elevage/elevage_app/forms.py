@@ -7,7 +7,9 @@ class ElevageForm(forms.ModelForm):
         
         
 class ActionForm(forms.Form):
-    vendre=forms.IntegerField(min_value=0,label="Lapins a vendre")
+    males_vendre=forms.IntegerField(min_value=0,label="males a vendre")
+    femelles_vendre=forms.IntegerField(min_value=0,label="femelle a vendre")
+    lapin_vendre=forms.IntegerField(min_value=0,label="lapins a vendre")
     acheter_nourriture=forms.FloatField(min_value=0,label="Nourriture a acheter_kg")
     acheter_cages=forms.IntegerField(min_value=0,label="Cages a acheter")
     
