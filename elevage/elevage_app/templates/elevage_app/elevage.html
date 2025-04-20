@@ -17,9 +17,24 @@
     {% endfor %}
 </ul>
 <h3>Actions du tour</h3>
-<form method="post">
+<form method="post" action="{% url 'elevage_app:EleVage' elevage.pk%}" >
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Valider</button>
 </form>
+<div class="alert alert-info">
+    <strong>Mois actuel :</strong> {{ elevage.mois_ecoules }}<br>
+    <strong>Au prochain tour :</strong>
+    <ul>
+        <li>Tous les lapins vieilliront de 1 mois</li>
+        <li>Les femelles adultes  ont 70% de chance de se reproduire (1-4 lapereaux)</li>
+        <li>Consommation de nourriture : 
+            <ul>
+                <li>Lapins jeunes  : 3kg/mois</li>
+                <li>Lapins adultes : 7.5kg/mois</li>
+            </ul>
+        </li>
+        <li>Surpopulation entraînera des morts aléatoires</li>
+    </ul>
+</div>
 {% endblock %}
