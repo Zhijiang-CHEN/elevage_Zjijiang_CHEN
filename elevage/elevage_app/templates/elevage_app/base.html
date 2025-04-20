@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{%load static  %}
+<link rel="stylesheet" href="{% static 'elevage_app/style.css'%}">
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Élevage de Lapins</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Élevage</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="{% url 'elevage_app:initial_elevage' %}">Nouvel élevage</a>
+                <a class="nav-link" href="{% url 'elevage_app:FarmList' %}">Liste des élevages</a>
+                <a clsaa="nav-link" href="{%url 'elevage_app:EleVage' elevage.pk %}">Tour des elevage</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
