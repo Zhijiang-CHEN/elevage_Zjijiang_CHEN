@@ -1,17 +1,55 @@
 {% extends "elevage_app/base.html" %}
+{% block title %}Liste des élevages{% endblock %}
 {%load static  %}
 <link rel="stylesheet" href="{% static 'elevage_app/style.css'%}">
 {% block  content %}
-<h2>List of elevage</h2>
-<ul class="list-group">
-    {% for farm in list_farm%}
-    <li class="list-group-item">
-        <a herf="{% url 'elevage_app:FarmList'  %}">{{farm.farm_nom}}</a>
-        - {{farm.males}} males,{{farm.femelles}} femelles,{{farm.a_vendre}} vendre,{{farm.nourriture_kg}} nourriture_kg
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1>Liste des élevages</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{% url 'elevage_app:initial_elevage' %}" class="btn btn-success">Nouvel élevage</a>
+    </div>
+</div>
 
-    </li>
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Rechercher une ferme..." 
+               value="{{ request.GET.q }}">
+        <button class="btn btn-outline-secondary" type="submit">Rechercher</button>
+    </div>
+</form>
+
+{% if list_farm %}
+<div class="list-group">
+    {% for farm in list_farm %}
+    <a href="{% url 'elevage_app:EleVage' farm.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ farm.farm_nom }}</h5>
+            <small>Mois: {{ farm.mois_ecoules }}</small>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <strong>Mâles:</strong> {{ farm.males }}
+            </div>
+            <div class="col-md-3">
+                <strong>Femelles:</strong> {{ farm.femelles }}
+            </div>
+            <div class="col-md-3">
+                <strong>À vendre:</strong> {{ farm.a_vendre }}
+            </div>
+            <div class="col-md-3">
+                <strong>Argent:</strong> {{ farm.argent }} €
+            </div>
+        </div>
+    </a>
     {% endfor %}
-</ul>
+</div>
+{% else %}
+<div class="alert alert-info">
+    Aucun élevage trouvé. <a href="{% url 'elevage_app:initial_elevage' %}">Créer un nouvel élevage</a>.
+</div>
+{% endif %}
 
 
 {% endblock  %}

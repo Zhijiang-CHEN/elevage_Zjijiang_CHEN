@@ -1,16 +1,42 @@
 import random
 from django.db import models
+from django.urls import reverse
 
 class Elevage(models.Model):
-    farm_nom = models.CharField(max_length=100)  #nom de la farm
+    farm_nom = models.CharField(max_length=100,unique=True)  #nom de la farm
     males = models.PositiveIntegerField(default=0)
     femelles = models.PositiveIntegerField(default=0)
     reproducteurs = models.PositiveIntegerField(default=0)
     a_vendre = models.PositiveIntegerField(default=0)
     nourriture_kg = models.FloatField(default=0)
     cages = models.PositiveIntegerField(default=1)
-    argent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    argent = models.DecimalField(max_digits=10, decimal_places=2, default=1000)
     mois_ecoules = models.PositiveIntegerField(default=0)
+    def get_absolute_url(self):
+        return reverse('elevage_app:EleVage', kwargs={'id': self.id})
+    
+    def calculer_capacite(self):
+        regle, created = Regle.objects.get_or_create(
+        defaults={
+            'prix_nourriture': 1.0,
+            'prix_cage': 50.0,
+            'prix_vente_lapin': 20.0,
+            'consommation_1mois': 0.1,
+            'consommation_2mois': 0.25,
+            'consommation_3mois': 0.25,
+            'portee_max': 4,
+            'cage_max': 6,
+            'cage_surcharge': 10,
+            'age_min_gravidite_mois': 6,
+            'age_max_gravidite_mois': 48,
+            'duree_gestation_mois': 1
+        }
+    )
+        return self.cages * regle.cage_max
+    
+    def calculer_place_disponible(self):
+        return self.calculer_capacite() - self.individus.filter(statut='P').count()
+    
     def jouer_tour(self,Lapin_vendre,acheter_nourriture,acheter_cages):
         regle=Regle.objects.first()
         
@@ -102,8 +128,11 @@ class  Individu(models.Model):
     sexe=models.CharField(max_length=1,choices=SEXE_CHOICES)
     age_mois=models.PositiveIntegerField(default=0)
     statut=models.CharField(max_length=1,choices=STATUT_CHOICES)
+    enceinte = models.BooleanField(default=False)
+    mois_gestation = models.IntegerField(default=0)
+    
     def __str__(self):
-        return f"{self.age_mois}-{self.sexe}-{self.statut}"
+        return f"{self.age_mois}mois-{self.get_sexe_display()}-{self.get_statut_display()}"
     
 class Regle(models.Model):
     prix_nourriture = models.DecimalField(max_digits=6, decimal_places=2)
@@ -115,11 +144,15 @@ class Regle(models.Model):
     portee_max = models.PositiveIntegerField(default=4,verbose_name="Maximam de nombre de chaque femelle")
     cage_max = models.PositiveIntegerField(default=6,verbose_name="nombre adoptee")
     cage_surcharge=models.PositiveIntegerField(default=10,verbose_name="Maximam de lapins dans chaque cage")
-    age_min_gravidite_mois = models.PositiveIntegerField(default=6,verbose_name="Minimum age")
+    age_min_gravidite_mois = models.PositiveIntegerField(default=3,verbose_name="Minimum age")
     age_max_gravidite_mois = models.PositiveIntegerField(default=48,verbose_name="maximam age")
     duree_gestation_mois = models.PositiveBigIntegerField(default=1,verbose_name="duree_gestion")
     def __str__(self):
         return "Regles du jeu"
+    class Meta:
+        verbose_name = "Règle"
+        verbose_name_plural = "Règles"
+        
     
     
     

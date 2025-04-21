@@ -1,11 +1,25 @@
 {% extends "elevage_app/base.html" %}
+{% block title %}Nouvel élevage{% endblock %}
 {%load static  %}
 <link rel="stylesheet" href="{% static 'elevage_app/style.css'%}">
 {%block content%}
-<h2>initial elevage</h2>
-<form method="post" action="{% url 'elevage_app:initial_elevage' %}" >
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-</form>
+<div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Initialisation d'un nouvel élevage</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">Créer l'élevage</button>
+                            <a href="{% url 'elevage_app:FarmList' %}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {%endblock%}

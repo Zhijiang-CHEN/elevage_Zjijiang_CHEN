@@ -1,42 +1,106 @@
 {% extends "elevage_app/base.html" %}
+{% block title %}{{ elevage.farm_nom }}{% endblock %}
 {%load static  %}
 <link rel="stylesheet" href="{% static 'elevage_app/style.css'%}">
 {% block content %}
-<h2>Détails de l'élevage: {{ elevage.farm_nom }}</h2>
-<p>Nombre de mâles: {{ elevage.males }}</p>
-<p>Nombre de femelles: {{ elevage.femelles }}</p>
-<P>Nombre de nourriture:{{elevage.nourriture_kg}}</P>
-<p>Nombre de cages:{{elevage.cages}}</p>
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>{{ elevage.farm_nom }}</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'elevage_app:FarmList' %}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>
 
-<h3>Liste des individus</h3>
-<ul>
-    {% for individu in individus %}
-    <li>
-        Sexe: {{ individu.get_sexe_display }}, 
-        Âge: {{ individu.age_mois}}, 
-        État: {{ individu.get_statut_display }}
-    </li>
-    {% endfor %}
-</ul>
-<h3>Actions du tour</h3>
-<form method="post" action="{% url 'elevage_app:EleVage' elevage.pk%}" >
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Valider</button>
-</form>
-<div class="alert alert-info">
-    <strong>Mois actuel :</strong> {{ elevage.mois_ecoules }}<br>
-    <strong>Au prochain tour :</strong>
-    <ul>
-        <li>Tous les lapins vieilliront de 1 mois</li>
-        <li>Les femelles adultes  ont 70% de chance de se reproduire (1-4 lapereaux)</li>
-        <li>Consommation de nourriture : 
-            <ul>
-                <li>Lapins jeunes  : 3kg/mois</li>
-                <li>Lapins adultes : 7.5kg/mois</li>
-            </ul>
-        </li>
-        <li>Surpopulation entraînera des morts aléatoires</li>
+{% if errors %}
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        {% for error in errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
     </ul>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0">Statistiques de l'élevage</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>Mâles:</strong> {{ elevage.males }}</p>
+                        <p><strong>Femelles:</strong> {{ elevage.femelles }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Nourriture:</strong> {{ elevage.nourriture_kg|floatformat:2 }} kg</p>
+                        <p><strong>Cages:</strong> {{ elevage.cages }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Argent:</strong> {{ elevage.argent }} €</p>
+                        <p><strong>Mois écoulés:</strong> {{ elevage.mois_ecoules }}</p>
+                    </div>
+                </div>
+                <p class="mb-0"><strong>Capacité:</strong> 
+                    {{ individus_presents }} / {{ capacite }} lapins
+                    ({{ place_disponible }} places disponibles)
+                </p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Actions du tour</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Jouer le tour</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Liste des individus</h3>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                <ul class="list-group">
+                    {% for individu in individus %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ individu.get_sexe_display }} - {{ individu.age_mois }} mois
+                        <span class="badge bg-{% if individu.statut == 'P' %}primary{% elif individu.statut == 'V' %}success{% else %}danger{% endif %}">
+                            {{ individu.get_statut_display }}
+                        </span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">Aucun individu dans cet élevage</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header bg-warning text-dark">
+        <h3 class="mb-0">Règles du jeu</h3>
+    </div>
+    <div class="card-body">
+        <ul class="mb-0">
+            <li><strong>Prix nourriture:</strong> {{ regles.prix_nourriture }} €/kg</li>
+            <li><strong>Prix cage:</strong> {{ regles.prix_cage }} €</li>
+            <li><strong>Prix vente lapin:</strong> {{ regles.prix_vente_lapin }} €</li>
+            <li><strong>Reproduction:</strong> Femelles de {{ regles.age_min_gravidite_mois }} à {{ regles.age_max_gravidite_mois }} mois, 70% de chance, portée de 1-{{ regles.portee_max }}</li>
+            <li><strong>Capacité cage:</strong> {{ regles.cage_max }} lapins (max {{ regles.cage_surcharge }})</li>
+        </ul>
+    </div>
 </div>
 {% endblock %}
