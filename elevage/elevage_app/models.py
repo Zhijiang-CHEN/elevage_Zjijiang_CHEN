@@ -1,6 +1,8 @@
+from decimal import Decimal
 import random
 from django.db import models
 from django.urls import reverse
+from django.db.models import F
 
 class Elevage(models.Model):
     farm_nom = models.CharField(max_length=100,unique=True)  #nom de la farm
@@ -48,14 +50,20 @@ class Elevage(models.Model):
         self.argent+=Lapin_vendre*regle.prix_vente_lapin
         
         #acheter les ressource
-        self.argent-=acheter_nourriture*regle.prix_nourriture
+        self.argent-=Decimal(str(acheter_nourriture))*regle.prix_nourriture
         self.nourriture_kg+=acheter_nourriture
         self.argent-=acheter_cages*regle.prix_cage
         self.cages+=acheter_cages
         
         #Augumenter l'age des lapins
-        Individu.objects.filter(elevage=self).update(age_mois=Individu.age_mois+1)
-        
+        # 获取要更新的主键列表
+        #ids_to_update = Individu.objects.filter(elevage=self).values_list('id', flat=True)[:10]
+
+        # 然后更新这些记录
+        #Individu.objects.filter(id__in=ids_to_update).update(age_mois=F('age_mois') + 1)
+        for individu in Individu.objects.filter(elevage=self):
+            individu.age_mois += 1
+            individu.save()
         #logique pour reproducteur
         femelle_reproductrices=Individu.objects.filter(
             elevage=self,
@@ -68,7 +76,8 @@ class Elevage(models.Model):
             if random.random()<0.8:
                 portee=random.randint(1,regle.portee_max)
                 for _ in range(portee):
-                    sexe=random.choice['M','F']
+                    genders=['F','M']
+                    sexe=random.choice(genders)
                     Individu.objects.create(
                         elevage=self,
                         sexe=sexe,
@@ -135,12 +144,12 @@ class  Individu(models.Model):
         return f"{self.age_mois}mois-{self.get_sexe_display()}-{self.get_statut_display()}"
     
 class Regle(models.Model):
-    prix_nourriture = models.DecimalField(max_digits=6, decimal_places=2)
-    prix_cage = models.DecimalField(max_digits=6, decimal_places=2)
-    prix_vente_lapin = models.DecimalField(max_digits=6, decimal_places=2)
-    consommation_1mois = models.FloatField(max_length=20)
-    consommation_2mois = models.FloatField(max_length=20)
-    consommation_3mois = models.FloatField(max_length=20)
+    prix_nourriture = models.DecimalField(max_digits=6, decimal_places=2,default=10)
+    prix_cage = models.DecimalField(max_digits=6, decimal_places=2,default=10)
+    prix_vente_lapin = models.DecimalField(max_digits=6, decimal_places=2,default=10)
+    consommation_1mois = models.FloatField(max_length=2,default=0.0)
+    consommation_2mois = models.FloatField(max_length=2,default=3.1)
+    consommation_3mois = models.FloatField(max_length=2,default=7.5)
     portee_max = models.PositiveIntegerField(default=4,verbose_name="Maximam de nombre de chaque femelle")
     cage_max = models.PositiveIntegerField(default=6,verbose_name="nombre adoptee")
     cage_surcharge=models.PositiveIntegerField(default=10,verbose_name="Maximam de lapins dans chaque cage")

@@ -31,6 +31,7 @@ class ActionForm(forms.Form):
             'class': 'form-control',
             'placeholder': 'Nombre de lapins à vendre'}
         ))
+    
     acheter_nourriture=forms.FloatField(min_value=0,
         label="Nourriture à acheter (kg)",
         widget=forms.NumberInput(attrs={

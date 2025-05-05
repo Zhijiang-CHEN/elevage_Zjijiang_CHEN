@@ -1,6 +1,7 @@
 body {
-    background-image: white url("elevage.png");
+    background-image: url("elevage.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: rgb(205, 103, 103);
 }
